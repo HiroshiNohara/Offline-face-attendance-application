@@ -41,7 +41,7 @@ public class SettingsActivity extends BaseActivity {
     private DrawerLayout mDrawerLayout;
     private int hour, minute;
     private int startHour, startMinute, endHour, endMinute;
-    private boolean fingerprintReturn;
+    private static boolean fingerprintReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

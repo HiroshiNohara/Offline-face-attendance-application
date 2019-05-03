@@ -10,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -93,6 +94,8 @@ public class FingerprintDialogFragment extends DialogFragment {
 
             @Override
             public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
+                ImageView imageView = (ImageView) getView().findViewById(R.id.fingerprint_imageView);
+                imageView.setImageResource(R.drawable.ic_fingerprint_done);
                 Toast.makeText(mActivity, "指纹认证成功", Toast.LENGTH_SHORT).show();
                 mActivity.onAuthenticated();
             }

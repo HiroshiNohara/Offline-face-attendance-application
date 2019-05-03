@@ -51,7 +51,7 @@ public class RegisterActivity extends BaseActivity {
     private AutoCompleteTextView mPostView;
     private ProgressDialog progressDialog;
     private String currentUid;
-    private boolean fingerprintReturn;
+    private static boolean fingerprintReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

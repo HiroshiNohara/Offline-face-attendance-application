@@ -46,7 +46,7 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
     private Map<Integer, Boolean> restoreMap;
     public SwipeRefreshLayout swipeRefresh;
     private DrawerLayout mDrawerLayout;
-    private boolean fingerprintReturn;
+    private static boolean fingerprintReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
