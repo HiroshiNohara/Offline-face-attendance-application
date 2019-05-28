@@ -34,12 +34,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.android.fra.ActivityCollector.finishAll;
-
 public class ManagementActivity extends BaseActivity implements ManagementAdapter.onItemClickListener {
 
     private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
     private List<Face> faceList = new ArrayList<>();
     private ManagementAdapter adapter;
     private TextView toolBarHeadText;
@@ -52,114 +49,108 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!pref.getBoolean("isLogin", false)) {
-            Intent intent = new Intent(ManagementActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finishAll();
-        } else {
-            if (pref.getBoolean("is_set_fingerprint", false) && pref.getBoolean("is_set_management_fingerprint", false) && !fingerprintReturn) {
-                Intent intent = new Intent(ManagementActivity.this, FingerprintActivity.class);
-                startActivityForResult(intent, 0);
-            }
-            setContentView(R.layout.activity_management);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.management_activity_toolBar);
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle("管理");
-            NavigationView navView = (NavigationView) findViewById(R.id.management_activity_nav_view);
-            mDrawerLayout = (DrawerLayout) findViewById(R.id.management_activity_drawer_layout);
-            View headerLayout = navView.inflateHeaderView(R.layout.nav_header);
-            ImageView drawerImageView = (ImageView) headerLayout.findViewById(R.id.nav_header_image);
-            TextView navTextView = (TextView) headerLayout.findViewById(R.id.nav_account);
-            navView.setCheckedItem(R.id.nav_management);
-            navTextView.setText(pref.getString("account", ""));
-            Glide.with(this)
-                    .load(R.drawable.nav_icon)
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(10, 5)))
-                    .into(drawerImageView);
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-                actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-            }
-
-            MenuItem menuItem = navView.getMenu().findItem(R.id.nav_management);
-            boolean isEggOn = pref.getBoolean("is_egg_on", false);
-            if (isEggOn == true) {
-                menuItem.setVisible(true);
-            } else {
-                menuItem.setVisible(false);
-            }
-            navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-                        mDrawerLayout.closeDrawers();
-                    }
-                    switch (menuItem.getItemId()) {
-                        case R.id.nav_capture:
-                            LitePal.deleteAll(Face.class, "valid = ?", "0");
-                            Intent cameraIntent = new Intent(ManagementActivity.this, CameraActivity.class);
-                            cameraIntent.putExtra("capture_mode", 0);
-                            startActivity(cameraIntent);
-                            break;
-                        case R.id.nav_register:
-                            LitePal.deleteAll(Face.class, "valid = ?", "0");
-                            Intent registerIntent = new Intent(ManagementActivity.this, RegisterActivity.class);
-                            startActivity(registerIntent);
-                            break;
-                        case R.id.nav_management:
-                            LitePal.deleteAll(Face.class, "valid = ?", "0");
-                            break;
-                        case R.id.nav_settings:
-                            LitePal.deleteAll(Face.class, "valid = ?", "0");
-                            Intent settingsIntent = new Intent(ManagementActivity.this, SettingsActivity.class);
-                            startActivity(settingsIntent);
-                            break;
-                        default:
-                    }
-                    return true;
-                }
-            });
-            LitePal.deleteAll(Face.class, "valid = ?", "0");
-            final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.management_recyclerView);
-            FloatingActionButton delete_button = (FloatingActionButton) findViewById(R.id.management_delete);
-            delete_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (adapter.getMap().size() != 0) {
-                        deleteItems();
-                        Snackbar.make(view, "已删除", Snackbar.LENGTH_SHORT).setAction("撤销", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                restoreItems();
-                                Toast.makeText(ManagementActivity.this, "已恢复删除的信息", Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
-                    }
-                }
-            });
-            initFace();
-            GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
-            recyclerView.setLayoutManager(layoutManager);
-            adapter = new ManagementAdapter(faceList);
-            recyclerView.setAdapter(adapter);
-            adapter.setListener(this);
-            toolBarHeadText = (TextView) findViewById(R.id.toolbar_headText);
-            toolBarHeadText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectAllOrNot();
-                }
-            });
-            swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-            swipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
-            swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    refreshRecyclerView();
-                }
-            });
+        if (pref.getBoolean("is_set_fingerprint", false) && pref.getBoolean("is_set_management_fingerprint", false) && !fingerprintReturn) {
+            Intent intent = new Intent(ManagementActivity.this, FingerprintActivity.class);
+            startActivityForResult(intent, 0);
         }
+        setContentView(R.layout.activity_management);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.management_activity_toolBar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(this.getString(R.string.function_management));
+        NavigationView navView = (NavigationView) findViewById(R.id.management_activity_nav_view);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.management_activity_drawer_layout);
+        View headerLayout = navView.inflateHeaderView(R.layout.nav_header);
+        ImageView drawerImageView = (ImageView) headerLayout.findViewById(R.id.nav_header_image);
+        TextView navTextView = (TextView) headerLayout.findViewById(R.id.nav_account);
+        navView.setCheckedItem(R.id.nav_management);
+        navTextView.setText(this.getString(R.string.app_name));
+        Glide.with(this)
+                .load(R.drawable.nav_icon)
+                .apply(RequestOptions.bitmapTransform(new BlurTransformation(10, 5)))
+                .into(drawerImageView);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        }
+
+        MenuItem menuItem = navView.getMenu().findItem(R.id.nav_management);
+        boolean isEggOn = pref.getBoolean("is_egg_on", false);
+        if (isEggOn == true) {
+            menuItem.setVisible(true);
+        } else {
+            menuItem.setVisible(false);
+        }
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.closeDrawers();
+                }
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_capture:
+                        LitePal.deleteAll(Face.class, "valid = ?", "0");
+                        Intent cameraIntent = new Intent(ManagementActivity.this, CameraActivity.class);
+                        cameraIntent.putExtra("capture_mode", 0);
+                        startActivity(cameraIntent);
+                        break;
+                    case R.id.nav_register:
+                        LitePal.deleteAll(Face.class, "valid = ?", "0");
+                        Intent registerIntent = new Intent(ManagementActivity.this, RegisterActivity.class);
+                        startActivity(registerIntent);
+                        break;
+                    case R.id.nav_management:
+                        LitePal.deleteAll(Face.class, "valid = ?", "0");
+                        break;
+                    case R.id.nav_settings:
+                        LitePal.deleteAll(Face.class, "valid = ?", "0");
+                        Intent settingsIntent = new Intent(ManagementActivity.this, SettingsActivity.class);
+                        startActivity(settingsIntent);
+                        break;
+                    default:
+                }
+                return true;
+            }
+        });
+        LitePal.deleteAll(Face.class, "valid = ?", "0");
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.management_recyclerView);
+        FloatingActionButton delete_button = (FloatingActionButton) findViewById(R.id.management_delete);
+        delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (adapter.getMap().size() != 0) {
+                    deleteItems();
+                    Snackbar.make(view, R.string.management_hasDeleted, Snackbar.LENGTH_SHORT).setAction(R.string.management_withdraw, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            restoreItems();
+                            Toast.makeText(ManagementActivity.this, R.string.management_withdraw_hint, Toast.LENGTH_SHORT).show();
+                        }
+                    }).setActionTextColor(getResources().getColor(R.color.colorAccent)).show();
+                }
+            }
+        });
+        initFace();
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new ManagementAdapter(faceList);
+        recyclerView.setAdapter(adapter);
+        adapter.setListener(this);
+        toolBarHeadText = (TextView) findViewById(R.id.toolbar_headText);
+        toolBarHeadText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectAllOrNot();
+            }
+        });
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshRecyclerView();
+            }
+        });
 
     }
 
@@ -175,11 +166,11 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
             }
             adapter.setMap(map);
             adapter.notifyDataSetChanged();
-            setText("取消全选");
+            setText(ManagementActivity.this.getString(R.string.management_selectAll_cancel));
         } else {
             adapter.setMap(new LinkedHashMap<Integer, Boolean>());
             adapter.notifyDataSetChanged();
-            setText("全选");
+            setText(ManagementActivity.this.getString(R.string.management_selectAll));
         }
     }
 
@@ -215,7 +206,7 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (adapter.getInDeletionMode() == true) {
+        if (adapter.getInDeletionMode()) {
             hideText();
             adapter.setInDeletionMode(false);
             adapter.notifyDataSetChanged();
@@ -237,9 +228,9 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
     public void showText() {
         toolBarHeadText.setVisibility(View.VISIBLE);
         if (adapter.getMap().size() < faceList.size()) {
-            setText("全选");
+            setText(ManagementActivity.this.getString(R.string.management_selectAll));
         } else {
-            setText("取消全选");
+            setText(ManagementActivity.this.getString(R.string.management_selectAll_cancel));
         }
     }
 
@@ -265,7 +256,7 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
             case 0:
                 if (resultCode == RESULT_OK) {
                     fingerprintReturn = data.getBooleanExtra("fingerprint_return", false);
-                }else{
+                } else {
                     finish();
                 }
                 break;

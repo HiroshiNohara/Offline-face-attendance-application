@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -28,8 +29,6 @@ import org.opencv.android.OpenCVLoader;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.android.fra.ActivityCollector.finishAll;
 
 public class CameraActivity extends BaseActivity {
 
@@ -52,93 +51,87 @@ public class CameraActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!pref.getBoolean("isLogin", false)) {
-            Intent intent = new Intent(CameraActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finishAll();
-        } else {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            setContentView(R.layout.camera_activity_main);
-            if (null == savedInstanceState) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.camera_container, CameraFragment.newInstance())
-                        .commit();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        setContentView(R.layout.camera_activity_main);
+        if (null == savedInstanceState) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.camera_container, CameraFragment.newInstance())
+                    .commit();
+        }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.camera_activity_toolBar);
+        setSupportActionBar(toolbar);
+        Intent intent = getIntent();
+        currentUid = intent.getStringExtra("current_uid");
+        captureMode = intent.getIntExtra("capture_mode", 0);
+        if (captureMode == 0) {
+            getSupportActionBar().setTitle(this.getString(R.string.function_attendance));
+            NavigationView navView = (NavigationView) findViewById(R.id.camera_activity_nav_view);
+            mDrawerLayout = (DrawerLayout) findViewById(R.id.camera_activity_drawer_layout);
+            View headerLayout = navView.inflateHeaderView(R.layout.nav_header);
+            ImageView drawerImageView = (ImageView) headerLayout.findViewById(R.id.nav_header_image);
+            navView.setCheckedItem(R.id.nav_capture);
+            TextView navTextView = (TextView) headerLayout.findViewById(R.id.nav_account);
+            navTextView.setText(this.getString(R.string.app_name));
+            Glide.with(this)
+                    .load(R.drawable.nav_icon)
+                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(10, 5)))
+                    .into(drawerImageView);
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
             }
 
-            Toolbar toolbar = (Toolbar) findViewById(R.id.camera_activity_toolBar);
-            setSupportActionBar(toolbar);
-            Intent intent = getIntent();
-            currentUid = intent.getStringExtra("current_uid");
-            captureMode = intent.getIntExtra("capture_mode", 0);
-            if (captureMode == 0) {
-                getSupportActionBar().setTitle("签到");
-                NavigationView navView = (NavigationView) findViewById(R.id.camera_activity_nav_view);
-                mDrawerLayout = (DrawerLayout) findViewById(R.id.camera_activity_drawer_layout);
-                View headerLayout = navView.inflateHeaderView(R.layout.nav_header);
-                ImageView drawerImageView = (ImageView) headerLayout.findViewById(R.id.nav_header_image);
-                navView.setCheckedItem(R.id.nav_capture);
-                TextView navTextView = (TextView) headerLayout.findViewById(R.id.nav_account);
-                navTextView.setText(pref.getString("account", ""));
-                Glide.with(this)
-                        .load(R.drawable.nav_icon)
-                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(10, 5)))
-                        .into(drawerImageView);
-                ActionBar actionBar = getSupportActionBar();
-                if (actionBar != null) {
-                    actionBar.setDisplayHomeAsUpEnabled(true);
-                    actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-                }
-
-                MenuItem menuItem = navView.getMenu().findItem(R.id.nav_management);
-                boolean isEggOn = pref.getBoolean("is_egg_on", false);
-                if (isEggOn == true) {
-                    menuItem.setVisible(true);
-                    setupShortcuts();
-                } else {
-                    menuItem.setVisible(false);
-                }
-                mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-                    @Override
-                    public void onDrawerClosed(View drawerView) {
-                        super.onDrawerClosed(drawerView);
-                        openDrawerLayout = false;
-                    }
-
-                    @Override
-                    public void onDrawerOpened(View drawerView) {
-                        super.onDrawerOpened(drawerView);
-                        openDrawerLayout = true;
-                    }
-                });
-                navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-                            mDrawerLayout.closeDrawers();
-                        }
-                        switch (menuItem.getItemId()) {
-                            case R.id.nav_capture:
-                                break;
-                            case R.id.nav_register:
-                                Intent registerIntent = new Intent(CameraActivity.this, RegisterActivity.class);
-                                startActivity(registerIntent);
-                                break;
-                            case R.id.nav_management:
-                                Intent managementIntent = new Intent(CameraActivity.this, ManagementActivity.class);
-                                startActivity(managementIntent);
-                                break;
-                            case R.id.nav_settings:
-                                Intent settingsIntent = new Intent(CameraActivity.this, SettingsActivity.class);
-                                startActivity(settingsIntent);
-                                break;
-                            default:
-                        }
-                        return true;
-                    }
-                });
-            } else if (captureMode == 1) {
-                getSupportActionBar().setTitle("添加面孔");
+            MenuItem menuItem = navView.getMenu().findItem(R.id.nav_management);
+            boolean isEggOn = pref.getBoolean("is_egg_on", false);
+            if (isEggOn) {
+                menuItem.setVisible(true);
+                setupShortcuts();
+            } else {
+                menuItem.setVisible(false);
             }
+            mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    super.onDrawerClosed(drawerView);
+                    openDrawerLayout = false;
+                }
+
+                @Override
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                    openDrawerLayout = true;
+                }
+            });
+            navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                        mDrawerLayout.closeDrawers();
+                    }
+                    switch (menuItem.getItemId()) {
+                        case R.id.nav_capture:
+                            break;
+                        case R.id.nav_register:
+                            Intent registerIntent = new Intent(CameraActivity.this, RegisterActivity.class);
+                            startActivity(registerIntent);
+                            break;
+                        case R.id.nav_management:
+                            Intent managementIntent = new Intent(CameraActivity.this, ManagementActivity.class);
+                            startActivity(managementIntent);
+                            break;
+                        case R.id.nav_settings:
+                            Intent settingsIntent = new Intent(CameraActivity.this, SettingsActivity.class);
+                            startActivity(settingsIntent);
+                            break;
+                        default:
+                    }
+                    return true;
+                }
+            });
+        } else if (captureMode == 1) {
+            getSupportActionBar().setTitle(this.getString(R.string.function_add_face));
         }
 
     }
@@ -163,8 +156,8 @@ public class CameraActivity extends BaseActivity {
         Intent intent = new Intent(this, ManagementActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         ShortcutInfo info = new ShortcutInfo.Builder(this, "dynamicShortcut0")
-                .setShortLabel("管理")
-                .setLongLabel("管理")
+                .setShortLabel(this.getString(R.string.management_shortcut_short_name))
+                .setLongLabel(this.getString(R.string.management_shortcut_long_name))
                 .setIcon(Icon.createWithResource(this, R.mipmap.ic_management_shortcut))
                 .setIntent(intent)
                 .setRank(0)
@@ -184,4 +177,15 @@ public class CameraActivity extends BaseActivity {
     public boolean getOpenDrawerLayout() {
         return openDrawerLayout;
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && captureMode == 1) {
+            Intent intent = new Intent(CameraActivity.this, RegisterActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 }
