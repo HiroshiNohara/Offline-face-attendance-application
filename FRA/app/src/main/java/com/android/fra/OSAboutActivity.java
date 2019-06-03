@@ -53,8 +53,6 @@ public class OSAboutActivity extends BaseActivity implements OSAboutAdapter.onIt
         urlList.add("https://github.com/LitePalFramework/LitePal");
         urlList.add("https://github.com/q805699513/OptionFrame");
         urlList.add("https://github.com/hdodenhof/CircleImageView");
-        urlList.add("https://github.com/square/okhttp");
-        urlList.add("https://github.com/google/gson");
         urlList.add("https://github.com/r0adkll/Slidr");
         urlList.add("https://github.com/prolificinteractive/material-calendarview");
         for (int i = 0; i < abouts.length; i++) {
