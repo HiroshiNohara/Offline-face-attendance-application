@@ -69,7 +69,7 @@ public class SettingsActivity extends BaseActivity {
         ImageView drawerImageView = (ImageView) headerLayout.findViewById(R.id.nav_header_image);
         TextView navTextView = (TextView) headerLayout.findViewById(R.id.nav_account);
         navView.setCheckedItem(R.id.nav_settings);
-        navTextView.setText(pref.getString("account", ""));
+        navTextView.setText(this.getString(R.string.app_name));
         Glide.with(this)
                 .load(R.drawable.nav_icon)
                 .apply(RequestOptions.bitmapTransform(new BlurTransformation(10, 5)))
