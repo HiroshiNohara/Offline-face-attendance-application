@@ -44,7 +44,6 @@ public class CalendarViewFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         view = inflater.inflate(R.layout.calender_dialog, container, false);
         mcv = (MaterialCalendarView) view.findViewById(R.id.mcv);
         initData();
