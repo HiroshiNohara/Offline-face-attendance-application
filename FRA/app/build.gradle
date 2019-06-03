@@ -7,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.longsh:OptionFrame:1.0.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'com.r0adkll:slidableactivity:2.0.6'
+    implementation 'com.github.prolificinteractive:material-calendarview:1.6.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

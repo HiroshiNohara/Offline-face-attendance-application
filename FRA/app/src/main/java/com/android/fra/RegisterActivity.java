@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.android.fra.db.Date;
 import com.android.fra.db.Face;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -30,6 +31,7 @@ import com.longsh.optionframelibrary.OptionMaterialDialog;
 import org.litepal.LitePal;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.litepal.LitePalApplication.getContext;
 
@@ -96,6 +98,10 @@ public class RegisterActivity extends BaseActivity {
                         startActivity(cameraIntent);
                         break;
                     case R.id.nav_register:
+                        break;
+                    case R.id.nav_search:
+                        Intent searchIntent = new Intent(RegisterActivity.this, SearchActivity.class);
+                        startActivity(searchIntent);
                         break;
                     case R.id.nav_management:
                         Intent managementIntent = new Intent(RegisterActivity.this, ManagementActivity.class);
@@ -191,6 +197,10 @@ public class RegisterActivity extends BaseActivity {
             mNameView.setError(getString(R.string.error_field_required));
             focusView = mNameView;
             cancel = true;
+        } else if (!isNameValid(name)) {
+            mNameView.setError(getString(R.string.error_invalid_name));
+            focusView = mNameView;
+            cancel = true;
         }
 
         if (!TextUtils.isEmpty(email) && !isEmailValid(email)) {
@@ -212,7 +222,11 @@ public class RegisterActivity extends BaseActivity {
             face.setPost(post);
             face.setEmail(email);
             face.setValid(true);
+            face.setCheckStatus("0");
             face.save();
+            Date date = new Date();
+            date.setUid(currentUid);
+            date.save();
             final OptionMaterialDialog mMaterialDialog = new OptionMaterialDialog(RegisterActivity.this);
             mMaterialDialog.setTitle(this.getString(R.string.operation_succeed)).setTitleTextColor(R.color.colorPrimary).setMessage(this.getString(R.string.register_info_hasSaved))
                     .setPositiveButton(this.getString(R.string.operation_next), new View.OnClickListener() {
@@ -229,6 +243,16 @@ public class RegisterActivity extends BaseActivity {
                     .show();
         }
 
+    }
+
+    private boolean isNameValid(String name) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        String rule = ".*[0-9].*";
+        if (pattern.matcher(name).matches() || name.matches(rule)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private boolean isEmailValid(String email) {

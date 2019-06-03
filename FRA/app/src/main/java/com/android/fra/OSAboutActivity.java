@@ -47,7 +47,8 @@ public class OSAboutActivity extends BaseActivity implements OSAboutAdapter.onIt
                 new About("LitePal", "LitePalFramework", "LitePal is an open source Android library that allows developers to use SQLite database extremely easy."),
                 new About("OptionFrame", "q805699513", "一款Android弹出框、对话框、Dialog、PopupWindow."),
                 new About("CircleImageView", "hdodenhof", "A fast circular ImageView perfect for profile images."),
-                new About("Slidr", "r0adkll", "Easily add slide-to-dismiss functionality to your Activity.")};
+                new About("Slidr", "r0adkll", "Easily add slide-to-dismiss functionality to your Activity."),
+                new About("MaterialCalendarView", "prolificinteractive", "A Material design back port of Android's CalendarView.")};
         urlList.add("https://github.com/wasabeef/glide-transformations");
         urlList.add("https://github.com/LitePalFramework/LitePal");
         urlList.add("https://github.com/q805699513/OptionFrame");
@@ -55,6 +56,7 @@ public class OSAboutActivity extends BaseActivity implements OSAboutAdapter.onIt
         urlList.add("https://github.com/square/okhttp");
         urlList.add("https://github.com/google/gson");
         urlList.add("https://github.com/r0adkll/Slidr");
+        urlList.add("https://github.com/prolificinteractive/material-calendarview");
         for (int i = 0; i < abouts.length; i++) {
             aboutList.add(abouts[i]);
         }

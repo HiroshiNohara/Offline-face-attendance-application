@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,6 @@ public class FingerprintDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         fingerprintManager = getContext().getSystemService(FingerprintManager.class);
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog);
-        setCancelable(false);
     }
 
     @Nullable
@@ -64,6 +64,18 @@ public class FingerprintDialogFragment extends DialogFragment {
     public void onResume() {
         super.onResume();
         startListening(mCipher);
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_BACK) {
+                    getActivity().finish();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override

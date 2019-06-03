@@ -111,14 +111,13 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/detail_edit_button"
+        android:id="@+id/detail_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginTop="13dp"
         android:layout_marginRight="10dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_edit" />
+        android:background="?android:attr/selectableItemBackgroundBorderless" />
 
     <View
         android:layout_width="match_parent"

@@ -60,7 +60,7 @@ public class ManagementAdapter extends RecyclerView.Adapter<ManagementAdapter.Vi
             emailTextView = (TextView) view.findViewById(R.id.detail_email);
             detailInfoView = (FrameLayout) view.findViewById(R.id.detail_info);
             root_view = (LinearLayout) view.findViewById(R.id.root_view);
-            edit_button = (ImageButton) view.findViewById(R.id.detail_edit_button);
+            edit_button = (ImageButton) view.findViewById(R.id.detail_button);
         }
     }
 
@@ -75,6 +75,7 @@ public class ManagementAdapter extends RecyclerView.Adapter<ManagementAdapter.Vi
         }
         final View view = LayoutInflater.from(mContext).inflate(R.layout.information_item, parent, false);
         final ViewHolder holder = new ViewHolder(view);
+        holder.edit_button.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_edit));
         holder.edit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +129,7 @@ public class ManagementAdapter extends RecyclerView.Adapter<ManagementAdapter.Vi
         holder.root_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (inDeletionMode == true) {
+                if (inDeletionMode) {
                     if (!holder.checkBoxView.isChecked()) {
                         holder.checkBoxView.setChecked(true);
                     } else {

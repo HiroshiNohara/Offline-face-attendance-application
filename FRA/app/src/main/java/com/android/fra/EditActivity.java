@@ -67,8 +67,8 @@ public class EditActivity extends BaseActivity {
         final EditText department_edit = (EditText) findViewById(R.id.department_edit);
         final EditText post_edit = (EditText) findViewById(R.id.post_edit);
         final EditText email_edit = (EditText) findViewById(R.id.email_edit);
-        Intent intent = getIntent();
 
+        Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
         uid_textView.setText(uid);
         spinner = (Spinner) findViewById(R.id.spinner);

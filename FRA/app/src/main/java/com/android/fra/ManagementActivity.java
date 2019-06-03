@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.fra.db.Date;
 import com.android.fra.db.Face;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -38,10 +39,11 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
 
     private SharedPreferences pref;
     private List<Face> faceList = new ArrayList<>();
+    private List<Face> deleteFaceList = new ArrayList<>();
     private ManagementAdapter adapter;
     private TextView toolBarHeadText;
     private Map<Integer, Boolean> restoreMap;
-    public SwipeRefreshLayout swipeRefresh;
+    private SwipeRefreshLayout swipeRefresh;
     private DrawerLayout mDrawerLayout;
     private static boolean fingerprintReturn;
 
@@ -89,20 +91,40 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
                 }
                 switch (menuItem.getItemId()) {
                     case R.id.nav_capture:
+                        deleteFaceList = LitePal.where("valid = ?", "0").find(Face.class);
+                        for (Face deleteFaces : deleteFaceList) {
+                            LitePal.deleteAll(Date.class, "uid = ?", deleteFaces.getUid());
+                        }
                         LitePal.deleteAll(Face.class, "valid = ?", "0");
                         Intent cameraIntent = new Intent(ManagementActivity.this, CameraActivity.class);
                         cameraIntent.putExtra("capture_mode", 0);
                         startActivity(cameraIntent);
                         break;
                     case R.id.nav_register:
+                        deleteFaceList = LitePal.where("valid = ?", "0").find(Face.class);
+                        for (Face deleteFaces : deleteFaceList) {
+                            LitePal.deleteAll(Date.class, "uid = ?", deleteFaces.getUid());
+                        }
                         LitePal.deleteAll(Face.class, "valid = ?", "0");
                         Intent registerIntent = new Intent(ManagementActivity.this, RegisterActivity.class);
                         startActivity(registerIntent);
                         break;
+                    case R.id.nav_search:
+                        Intent searchIntent = new Intent(ManagementActivity.this, SearchActivity.class);
+                        startActivity(searchIntent);
+                        break;
                     case R.id.nav_management:
+                        deleteFaceList = LitePal.where("valid = ?", "0").find(Face.class);
+                        for (Face deleteFaces : deleteFaceList) {
+                            LitePal.deleteAll(Date.class, "uid = ?", deleteFaces.getUid());
+                        }
                         LitePal.deleteAll(Face.class, "valid = ?", "0");
                         break;
                     case R.id.nav_settings:
+                        deleteFaceList = LitePal.where("valid = ?", "0").find(Face.class);
+                        for (Face deleteFaces : deleteFaceList) {
+                            LitePal.deleteAll(Date.class, "uid = ?", deleteFaces.getUid());
+                        }
                         LitePal.deleteAll(Face.class, "valid = ?", "0");
                         Intent settingsIntent = new Intent(ManagementActivity.this, SettingsActivity.class);
                         startActivity(settingsIntent);
@@ -112,6 +134,10 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
                 return true;
             }
         });
+        deleteFaceList = LitePal.where("valid = ?", "0").find(Face.class);
+        for (Face deleteFaces : deleteFaceList) {
+            LitePal.deleteAll(Date.class, "uid = ?", deleteFaces.getUid());
+        }
         LitePal.deleteAll(Face.class, "valid = ?", "0");
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.management_recyclerView);
         FloatingActionButton delete_button = (FloatingActionButton) findViewById(R.id.management_delete);
@@ -214,6 +240,10 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
             return true;
         }
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            deleteFaceList = LitePal.where("valid = ?", "0").find(Face.class);
+            for (Face deleteFaces : deleteFaceList) {
+                LitePal.deleteAll(Date.class, "uid = ?", deleteFaces.getUid());
+            }
             LitePal.deleteAll(Face.class, "valid = ?", "0");
         }
         return super.onKeyDown(keyCode, event);
@@ -246,6 +276,10 @@ public class ManagementActivity extends BaseActivity implements ManagementAdapte
         adapter = new ManagementAdapter(faceList);
         recyclerView.setAdapter(adapter);
         adapter.setListener(this);
+        deleteFaceList = LitePal.where("valid = ?", "0").find(Face.class);
+        for (Face deleteFaces : deleteFaceList) {
+            LitePal.deleteAll(Date.class, "uid = ?", deleteFaces.getUid());
+        }
         LitePal.deleteAll(Face.class, "valid = ?", "0");
         swipeRefresh.setRefreshing(false);
     }

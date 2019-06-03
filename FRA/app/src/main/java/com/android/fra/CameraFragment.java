@@ -37,7 +37,6 @@ import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -58,6 +57,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.fra.db.Date;
 import com.longsh.optionframelibrary.OptionMaterialDialog;
 
 import org.litepal.LitePal;
@@ -126,6 +126,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private int FrameInterval = 50;
     private List<com.android.fra.db.Face> faces;
     private String attendanceTime;
+    private int currentYear;
+    private int currentMonth;
+    private int currentDay;
     private boolean isSetTime;
     private int startHour;
     private int startMinute;
@@ -212,9 +215,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                                 Calendar calendar = Calendar.getInstance();
                                 String captureUid = new LBP().getFaceOwner(feature, 120);
                                 hasCaptured = true;
-                                int year = calendar.get(Calendar.YEAR);
+                                currentYear = calendar.get(Calendar.YEAR);
                                 int month = calendar.get(Calendar.MONTH) + 1;
-                                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                                currentMonth = month;
+                                currentDay = calendar.get(Calendar.DAY_OF_MONTH);
                                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
                                 int minute = calendar.get(Calendar.MINUTE);
                                 int second = calendar.get(Calendar.SECOND);
@@ -242,38 +246,61 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                                 } else {
                                     if (!captureUid.equals("NoFaceOwner")) {
                                         faces = LitePal.where("uid = ?", captureUid).find(com.android.fra.db.Face.class);
-                                        String showMonth;
-                                        if (month < 10) {
-                                            showMonth = "0" + String.valueOf(month);
+                                        if (faces.get(0).getCheckStatus().equals("0")) {
+                                            String showMonth;
+                                            if (month < 10) {
+                                                showMonth = "0" + String.valueOf(month);
+                                            } else {
+                                                showMonth = String.valueOf(month);
+                                            }
+                                            String showDay;
+                                            if (currentDay < 10) {
+                                                showDay = "0" + String.valueOf(currentDay);
+                                            } else {
+                                                showDay = String.valueOf(currentDay);
+                                            }
+                                            String showHour;
+                                            if (hour < 10) {
+                                                showHour = "0" + String.valueOf(hour);
+                                            } else {
+                                                showHour = String.valueOf(hour);
+                                            }
+                                            String showMinute;
+                                            if (minute < 10) {
+                                                showMinute = "0" + String.valueOf(minute);
+                                            } else {
+                                                showMinute = String.valueOf(minute);
+                                            }
+                                            String showSecond;
+                                            if (second < 10) {
+                                                showSecond = "0" + String.valueOf(second);
+                                            } else {
+                                                showSecond = String.valueOf(second);
+                                            }
+                                            attendanceTime = currentYear + "." + showMonth + "." + showDay + " " + showHour + ":" + showMinute + ":" + showSecond;
+                                            detectFace();
                                         } else {
-                                            showMonth = String.valueOf(month);
+                                            mMaterialDialog.setTitle(getActivity().getString(R.string.attendance_hasAttendance)).setTitleTextColor(R.color.noFaceOwner).setTitleTextSize((float) 22.5)
+                                                    .setMessage(getActivity().getString(R.string.attendance_uid) + " " + faces.get(0).getUid() + "\n" + getActivity().getString(R.string.attendance_name) + " "
+                                                            + faces.get(0).getName() + "\n" + getActivity().getString(R.string.attendance_department) + " " + faces.get(0).getDepartment()
+                                                            + "\n" + getActivity().getString(R.string.attendance_last_time) + " " + faces.get(0).getLastCheckTime()).setMessageTextSize((float) 16.5)
+                                                    .setPositiveButton(getActivity().getString(R.string.operation_ok), new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            mMaterialDialog.dismiss();
+                                                            hasCaptured = false;
+                                                        }
+                                                    })
+                                                    .setPositiveButtonTextColor(R.color.noFaceOwner)
+                                                    .show();
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    mMaterialDialog.dismiss();
+                                                    hasCaptured = false;
+                                                }
+                                            }, 3000);
                                         }
-                                        String showDay;
-                                        if (day < 10) {
-                                            showDay = "0" + String.valueOf(day);
-                                        } else {
-                                            showDay = String.valueOf(day);
-                                        }
-                                        String showHour;
-                                        if (hour < 10) {
-                                            showHour = "0" + String.valueOf(hour);
-                                        } else {
-                                            showHour = String.valueOf(hour);
-                                        }
-                                        String showMinute;
-                                        if (minute < 10) {
-                                            showMinute = "0" + String.valueOf(minute);
-                                        } else {
-                                            showMinute = String.valueOf(minute);
-                                        }
-                                        String showSecond;
-                                        if (second < 10) {
-                                            showSecond = "0" + String.valueOf(second);
-                                        } else {
-                                            showSecond = String.valueOf(second);
-                                        }
-                                        attendanceTime = year + "." + showMonth + "." + showDay + " " + showHour + ":" + showMinute + ":" + showSecond;
-                                        detectFace();
                                     } else {
                                         mMaterialDialog.setTitle(R.string.attendance_error).setTitleTextColor(R.color.noFaceOwner).setTitleTextSize((float) 22.5)
                                                 .setMessage(R.string.attendance_not_register).setMessageTextSize((float) 16.5)
@@ -947,6 +974,84 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     }
 
     private void detectFace() {
+        Date date = new Date();
+        if (currentMonth == 1) {
+            if (date.getJanuary() == null) {
+                date.setJanuary(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setJanuary(date.getJanuary() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 2) {
+            if (date.getFebruary() == null) {
+                date.setFebruary(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setFebruary(date.getFebruary() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 3) {
+            if (date.getMarch() == null) {
+                date.setMarch(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setMarch(date.getMarch() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 4) {
+            if (date.getApril() == null) {
+                date.setApril(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setApril(date.getApril() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 5) {
+            if (date.getMay() == null) {
+                date.setMay(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setMay(date.getMay() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 6) {
+            if (date.getJune() == null) {
+                date.setJune(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setJune(date.getJune() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 7) {
+            if (date.getJuly() == null) {
+                date.setJuly(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setJuly(date.getJuly() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 8) {
+            if (date.getAugust() == null) {
+                date.setAugust(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setAugust(date.getAugust() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 9) {
+            if (date.getSeptember() == null) {
+                date.setSeptember(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setSeptember(date.getSeptember() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 10) {
+            if (date.getOctober() == null) {
+                date.setOctober(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setOctober(date.getOctober() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else if (currentMonth == 11) {
+            if (date.getNovember() == null) {
+                date.setNovember(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setNovember(date.getNovember() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        } else {
+            if (date.getDecember() == null) {
+                date.setDecember(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            } else {
+                date.setDecember(date.getDecember() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            }
+        }
+        date.updateAll("uid = ?", faces.get(0).getUid());
+        faces.get(0).setCheckStatus("1");
+        faces.get(0).setLastCheckTime(attendanceTime);
+        faces.get(0).save();
         final OptionMaterialDialog mMaterialDialog = new OptionMaterialDialog(getActivity());
         mMaterialDialog.setTitle(getActivity().getString(R.string.attendance_ok)).setTitleTextColor(R.color.colorPrimary).setTitleTextSize((float) 22.5)
                 .setMessage(getActivity().getString(R.string.attendance_uid) + " " + faces.get(0).getUid() + "\n" + getActivity().getString(R.string.attendance_name) + " "
@@ -991,7 +1096,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
 
     @Override
     public void onClick(View v) {
-
     }
 
 }

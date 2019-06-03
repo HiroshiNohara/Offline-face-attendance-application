@@ -31,9 +31,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.android.fra.db.Face;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.longsh.optionframelibrary.OptionMaterialDialog;
+
+import org.litepal.LitePal;
 
 import static org.litepal.LitePalApplication.getContext;
 
@@ -102,6 +105,10 @@ public class SettingsActivity extends BaseActivity {
                     case R.id.nav_register:
                         Intent registerIntent = new Intent(SettingsActivity.this, RegisterActivity.class);
                         startActivity(registerIntent);
+                        break;
+                    case R.id.nav_search:
+                        Intent searchIntent = new Intent(SettingsActivity.this, SearchActivity.class);
+                        startActivity(searchIntent);
                         break;
                     case R.id.nav_management:
                         Intent managementIntent = new Intent(SettingsActivity.this, ManagementActivity.class);
@@ -229,6 +236,34 @@ public class SettingsActivity extends BaseActivity {
             }
         });
 
+        RelativeLayout changeAttendanceState = (RelativeLayout) findViewById(R.id.change_attendance_state);
+        changeAttendanceState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final OptionMaterialDialog confirmDialog = new OptionMaterialDialog(SettingsActivity.this);
+                confirmDialog.setMessage(SettingsActivity.this.getString(R.string.settings_change_state)).setMessageTextSize((float) 16.5)
+                        .setPositiveButton(SettingsActivity.this.getString(R.string.operation_ok), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Face face = new Face();
+                                face.setCheckStatus("0");
+                                face.updateAll();
+                                confirmDialog.dismiss();
+                                Toast.makeText(SettingsActivity.this, R.string.settings_reset_succeed, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setPositiveButtonTextColor(R.color.noFaceOwner)
+                        .setNegativeButton(SettingsActivity.this.getString(R.string.operation_cancel), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                confirmDialog.dismiss();
+                            }
+                        })
+                        .setNegativeButtonTextColor(R.color.noFaceOwner)
+                        .show();
+            }
+        });
+
         TextView versionCode = (TextView) findViewById(R.id.version_code);
         String code = "";
         PackageManager manager = getContext().getPackageManager();
@@ -278,10 +313,12 @@ public class SettingsActivity extends BaseActivity {
             });
             final LinearLayout fingerprintChoose = (LinearLayout) findViewById(R.id.fingerprint_choose);
             final SwitchCompat fingerprintRegisterSwitch = (SwitchCompat) findViewById(R.id.fingerprint_register_switch);
+            final SwitchCompat fingerprintSearchSwitch = (SwitchCompat) findViewById(R.id.fingerprint_search_switch);
             final SwitchCompat fingerprintManagementSwitch = (SwitchCompat) findViewById(R.id.fingerprint_management_switch);
             final SwitchCompat fingerprintSettingsSwitch = (SwitchCompat) findViewById(R.id.fingerprint_settings_switch);
             boolean isSetFingerprint = pref.getBoolean("is_set_fingerprint", false);
             boolean isSetRegisterFingerprint = pref.getBoolean("is_set_register_fingerprint", false);
+            boolean isSetSearchFingerprint = pref.getBoolean("is_set_search_fingerprint", false);
             boolean isSetManagementFingerprint = pref.getBoolean("is_set_management_fingerprint", false);
             boolean isSetSettingsFingerprint = pref.getBoolean("is_set_settings_fingerprint", false);
             if (isSetFingerprint) {
@@ -324,7 +361,34 @@ public class SettingsActivity extends BaseActivity {
             fingerprintRegisterSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (!isChecked && !fingerprintManagementSwitch.isChecked() && !fingerprintSettingsSwitch.isChecked()) {
+                    if (!isChecked && !fingerprintSearchSwitch.isChecked() && !fingerprintManagementSwitch.isChecked() && !fingerprintSettingsSwitch.isChecked()) {
+                        fingerprintSwitch.setChecked(false);
+                        fingerprintChoose.measure(0, 0);
+                        final int height = fingerprintChoose.getMeasuredHeight();
+                        dismiss(fingerprintChoose, height);
+                    }
+                }
+            });
+            if (isSetSearchFingerprint) {
+                fingerprintSearchSwitch.setChecked(true);
+            } else {
+                fingerprintSearchSwitch.setChecked(false);
+            }
+            RelativeLayout fingerprintSearchRelativeLayout = (RelativeLayout) findViewById(R.id.fingerprint_search_relativeLayout);
+            fingerprintSearchRelativeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (fingerprintSearchSwitch.isChecked()) {
+                        fingerprintSearchSwitch.setChecked(false);
+                    } else {
+                        fingerprintSearchSwitch.setChecked(true);
+                    }
+                }
+            });
+            fingerprintSearchSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (!isChecked && !fingerprintRegisterSwitch.isChecked() && !fingerprintManagementSwitch.isChecked() && !fingerprintSettingsSwitch.isChecked()) {
                         fingerprintSwitch.setChecked(false);
                         fingerprintChoose.measure(0, 0);
                         final int height = fingerprintChoose.getMeasuredHeight();
@@ -350,7 +414,7 @@ public class SettingsActivity extends BaseActivity {
             fingerprintManagementSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (!isChecked && !fingerprintRegisterSwitch.isChecked() && !fingerprintSettingsSwitch.isChecked()) {
+                    if (!isChecked && !fingerprintRegisterSwitch.isChecked() && !fingerprintSearchSwitch.isChecked() && !fingerprintSettingsSwitch.isChecked()) {
                         fingerprintSwitch.setChecked(false);
                         fingerprintChoose.measure(0, 0);
                         final int height = fingerprintChoose.getMeasuredHeight();
@@ -377,7 +441,7 @@ public class SettingsActivity extends BaseActivity {
             fingerprintSettingsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (!isChecked && !fingerprintRegisterSwitch.isChecked() && !fingerprintManagementSwitch.isChecked()) {
+                    if (!isChecked && !fingerprintRegisterSwitch.isChecked() && !fingerprintSearchSwitch.isChecked() && !fingerprintManagementSwitch.isChecked()) {
                         fingerprintSwitch.setChecked(false);
                         fingerprintChoose.measure(0, 0);
                         final int height = fingerprintChoose.getMeasuredHeight();
@@ -480,6 +544,7 @@ public class SettingsActivity extends BaseActivity {
         final SwitchCompat timeSwitch = (SwitchCompat) findViewById(R.id.time_switch);
         SwitchCompat fingerprintSwitch = (SwitchCompat) findViewById(R.id.fingerprint_switch);
         SwitchCompat fingerprintRegisterSwitch = (SwitchCompat) findViewById(R.id.fingerprint_register_switch);
+        SwitchCompat fingerprintSearchSwitch = (SwitchCompat) findViewById(R.id.fingerprint_search_switch);
         SwitchCompat fingerprintManagementSwitch = (SwitchCompat) findViewById(R.id.fingerprint_management_switch);
         SwitchCompat fingerprintSettingsSwitch = (SwitchCompat) findViewById(R.id.fingerprint_settings_switch);
         if (timeSwitch.isChecked() && startHour == endHour && startMinute == endMinute) {
@@ -502,7 +567,8 @@ public class SettingsActivity extends BaseActivity {
         } else {
             editor.putBoolean("is_set_time", false);
         }
-        if (fingerprintSwitch.isChecked() && (fingerprintRegisterSwitch.isChecked() || fingerprintManagementSwitch.isChecked() || fingerprintSettingsSwitch.isChecked())) {
+        if (fingerprintSwitch.isChecked() && (fingerprintRegisterSwitch.isChecked() || fingerprintSearchSwitch.isChecked() ||
+                fingerprintManagementSwitch.isChecked() || fingerprintSettingsSwitch.isChecked())) {
             editor.putBoolean("is_set_fingerprint", true);
         } else {
             fingerprintSwitch.setChecked(false);
@@ -513,6 +579,7 @@ public class SettingsActivity extends BaseActivity {
         editor.putInt("endHour", endHour);
         editor.putInt("endMinute", endMinute);
         editor.putBoolean("is_set_register_fingerprint", fingerprintRegisterSwitch.isChecked());
+        editor.putBoolean("is_set_search_fingerprint", fingerprintSearchSwitch.isChecked());
         editor.putBoolean("is_set_management_fingerprint", fingerprintManagementSwitch.isChecked());
         editor.putBoolean("is_set_settings_fingerprint", fingerprintSettingsSwitch.isChecked());
         editor.apply();

@@ -117,6 +117,10 @@ public class CameraActivity extends BaseActivity {
                             Intent registerIntent = new Intent(CameraActivity.this, RegisterActivity.class);
                             startActivity(registerIntent);
                             break;
+                        case R.id.nav_search:
+                            Intent searchIntent = new Intent(CameraActivity.this, SearchActivity.class);
+                            startActivity(searchIntent);
+                            break;
                         case R.id.nav_management:
                             Intent managementIntent = new Intent(CameraActivity.this, ManagementActivity.class);
                             startActivity(managementIntent);

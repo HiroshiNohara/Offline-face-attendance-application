@@ -5,13 +5,28 @@
         android:enabled="true"
         android:icon="@mipmap/ic_settings_shortcut"
         android:shortcutDisabledMessage="@string/shortcut_disabled"
-        android:shortcutId="shortcut1"
+        android:shortcutId="shortcut2"
         android:shortcutLongLabel="@string/settings_shortcut_long_name"
         android:shortcutShortLabel="@string/settings_shortcut_short_name">
 
         <intent
             android:action="android.intent.action.MAIN"
             android:targetClass="com.android.fra.SettingsActivity"
+            android:targetPackage="com.android.fra" />
+
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@mipmap/ic_search_shortcut"
+        android:shortcutDisabledMessage="@string/shortcut_disabled"
+        android:shortcutId="shortcut1"
+        android:shortcutLongLabel="@string/search_shortcut_short_name"
+        android:shortcutShortLabel="@string/search_shortcut_long_name">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.android.fra.SearchActivity"
             android:targetPackage="com.android.fra" />
 
     </shortcut>

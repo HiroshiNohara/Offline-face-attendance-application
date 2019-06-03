@@ -3,7 +3,6 @@ package com.android.fra.db;
 import org.litepal.crud.LitePalSupport;
 
 public class Face extends LitePalSupport {
-    private String pid;
     private String uid;
     private String name;
     private String gender;
@@ -14,14 +13,7 @@ public class Face extends LitePalSupport {
     private String feature;
     private Boolean valid;
     private String check_status;
-
-    public String getPid() {
-        return pid;
-    }
-
-    public void setPid(String pid) {
-        this.pid = pid;
-    }
+    private String lastCheckTime;
 
     public String getUid() {
         return uid;
@@ -101,6 +93,14 @@ public class Face extends LitePalSupport {
 
     public void setCheckStatus(String check_status) {
         this.check_status = check_status;
+    }
+
+    public String getLastCheckTime() {
+        return lastCheckTime;
+    }
+
+    public void setLastCheckTime(String lastCheckTime) {
+        this.lastCheckTime = lastCheckTime;
     }
 
 }

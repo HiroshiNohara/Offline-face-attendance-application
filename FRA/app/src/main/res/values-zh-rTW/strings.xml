@@ -14,6 +14,7 @@
     <!-- Strings related to function -->
     <string name="function_attendance">簽到</string>
     <string name="function_register">註冊</string>
+    <string name="function_search">查詢</string>
     <string name="function_management">管理</string>
     <string name="function_settings">設置</string>
     <string name="function_detail">詳情</string>
@@ -46,6 +47,7 @@
     <string name="register_post">職務</string>
     <string name="register_email">郵箱</string>
     <string name="register_must_field">*</string>
+    <string name="error_invalid_name">姓名中不能包含數字</string>
     <string name="error_invalid_email">郵箱地址格式錯誤</string>
     <string name="error_invalid_phone">手機號碼格式錯誤</string>
     <string name="error_field_required">該項為必填項目</string>
@@ -72,6 +74,19 @@
     <string name="record_info_content_1">將設備放在與視線平齊的高度</string>
     <string name="record_info_content_label">·</string>
 
+    <!-- Strings related to search -->
+    <string name="search_hint">搜索工號或姓名</string>
+    <string name="search_no_find">沒有找到相關結果</string>
+    <string name="sunday">日</string>
+    <string name="monday">一</string>
+    <string name="tuesday">二</string>
+    <string name="wednesday">三</string>
+    <string name="thursday">四</string>
+    <string name="friday">五</string>
+    <string name="saturday">六</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
+
     <!-- Strings related to management -->
     <string name="management_hasDeleted">已刪除</string>
     <string name="management_withdraw">撤銷</string>
@@ -88,10 +103,12 @@
     <string name="settings_time_start">開始:</string>
     <string name="settings_time_end">結束:</string>
     <string name="settings_user_control">用戶控制功能</string>
+    <string name="settings_change_state">確定重置所有人的簽到狀態？</string>
+    <string name="settings_reset_succeed">重置成功</string>
     <string name="settings_fingerprint">指紋身份驗證</string>
     <string name="settings_fingerprint_hint">在此設備上操作時</string>
-    <string name="settings_account_control">***控制</string>
-    <string name="settings_account_control_hint">******</string>
+    <string name="settings_reset">簽到重置</string>
+    <string name="settings_reset_hint">重置所有人的簽到狀態</string>
     <string name="settings_info">應用信息</string>
     <string name="settings_info_version">應用版本</string>
     <string name="settings_succeed">設置成功</string>
@@ -131,6 +148,8 @@
     <!-- Strings related to shortcuts -->
     <string name="register_shortcut_long_name">註冊</string>
     <string name="register_shortcut_short_name">註冊</string>
+    <string name="search_shortcut_long_name">查詢</string>
+    <string name="search_shortcut_short_name">查詢</string>
     <string name="management_shortcut_long_name">管理</string>
     <string name="management_shortcut_short_name">管理</string>
     <string name="settings_shortcut_long_name">設置</string>
