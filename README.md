@@ -3,7 +3,7 @@
 <p align="left">
 	<img src="https://github.com/nbcsproject/FaceRecognitionAttendance-FRA/blob/master/FRA_Client-Server/App/Screenshots/icon.png" alt="Sample"  width="100" height="100"></p>
 
-This client application can help you streamline your employee sign-in process by simply running it on an Android device that supports front camera.
+This application can help you streamline your employee attendance process by simply running it on an Android device that supports front camera.
 
 ## Interface
 
@@ -86,10 +86,11 @@ After opening this application, you will see the following interfaces:
 ## Precautions
 
 - All major functions can be switched by swiping the pop-up side-slip menu to the right.
-- This app will only apply for **Camera** permissions on your device. Individual ROMs will prompt the app to request additional permissions. You can choose to ignore or deny permissions.
+- This application will only apply for **Camera** permissions on your device. Individual ROMs will prompt the application to request additional permissions. You can choose to ignore or deny these permissions.
 - Since this application does not rely on the server, you must manually enter the settings before the start of the new attendance date to clear the employee's previous attendance mark.
 - The default operation after fingerprint verification is the user's own operation, so please clear the activity of **FaceAttendance** in the background after exiting.
 - This application only passes the real machine test on Huawei Mate 9. For some reasons, the face detection frame of the mobile phone device of other models will be offset, but this may not affect the normal use.
+- The network permission required for this application is only for displaying and accessing the GitHub address of the open source framework authors, without any upload or download behavior within the application.
 
 ## Change logs
 
@@ -97,13 +98,13 @@ After opening this application, you will see the following interfaces:
 
 - Add search function
 - Add the view of employee attendance history
-- Add the discrepancy of employee repeat attendance function
+- Restrict employee repeat attendance
 - Simplify some operational processes
 - Fix known issues
 
 ### 1.1.0
 
-- Remove the user login function
+- Remove the administrator login function
 - Fix the problem that the application control is incomplete under the device landscape
 - Support for multi-language switching
 - Interface UI logic adjustment
@@ -119,9 +120,9 @@ After opening this application, you will see the following interfaces:
 
 ## Acknowledgement
 
-Face recognition algorithm used in this application is from a paper published by T.Ojala et al. in 1996, see **Reference**.
+- Face recognition algorithm used in this application is from a paper published by T.Ojala et al. in 1996, see **Reference**.
 
-Simultaneously， this application uses several open source frameworks in the development process, which can be viewed in the application via `Settings`-`Application version`-`Open source related`, thanks to the open source spirit of these framework authors.# Offline face attendance application
+- Simultaneously, this application uses several open source frameworks in the development process, which can be viewed in the application via `Settings`-`Application version`-`Open source related`, thanks to the open source spirit of these framework authors.
 
 ## Reference
 
