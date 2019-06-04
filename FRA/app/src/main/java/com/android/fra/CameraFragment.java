@@ -974,81 +974,81 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     }
 
     private void detectFace() {
-        Date date = new Date();
+        List<Date> dates = LitePal.where("uid = ?", faces.get(0).getUid()).find(Date.class);
         if (currentMonth == 1) {
-            if (date.getJanuary() == null) {
-                date.setJanuary(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getJanuary() == null) {
+                dates.get(0).setJanuary(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setJanuary(date.getJanuary() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setJanuary(dates.get(0).getJanuary() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 2) {
-            if (date.getFebruary() == null) {
-                date.setFebruary(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getFebruary() == null) {
+                dates.get(0).setFebruary(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setFebruary(date.getFebruary() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setFebruary(dates.get(0).getFebruary() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 3) {
-            if (date.getMarch() == null) {
-                date.setMarch(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getMarch() == null) {
+                dates.get(0).setMarch(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setMarch(date.getMarch() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setMarch(dates.get(0).getMarch() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 4) {
-            if (date.getApril() == null) {
-                date.setApril(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getApril() == null) {
+                dates.get(0).setApril(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setApril(date.getApril() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setApril(dates.get(0).getApril() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 5) {
-            if (date.getMay() == null) {
-                date.setMay(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getMay() == null) {
+                dates.get(0).setMay(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setMay(date.getMay() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setMay(dates.get(0).getMay() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 6) {
-            if (date.getJune() == null) {
-                date.setJune(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getJune() == null) {
+                dates.get(0).setJune(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setJune(date.getJune() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setJune(dates.get(0).getJune() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 7) {
-            if (date.getJuly() == null) {
-                date.setJuly(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getJuly() == null) {
+                dates.get(0).setJuly(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setJuly(date.getJuly() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setJuly(dates.get(0).getJuly() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 8) {
-            if (date.getAugust() == null) {
-                date.setAugust(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getAugust() == null) {
+                dates.get(0).setAugust(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setAugust(date.getAugust() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setAugust(dates.get(0).getAugust() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 9) {
-            if (date.getSeptember() == null) {
-                date.setSeptember(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getSeptember() == null) {
+                dates.get(0).setSeptember(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setSeptember(date.getSeptember() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setSeptember(dates.get(0).getSeptember() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 10) {
-            if (date.getOctober() == null) {
-                date.setOctober(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getOctober() == null) {
+                dates.get(0).setOctober(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setOctober(date.getOctober() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setOctober(dates.get(0).getOctober() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else if (currentMonth == 11) {
-            if (date.getNovember() == null) {
-                date.setNovember(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getNovember() == null) {
+                dates.get(0).setNovember(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setNovember(date.getNovember() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setNovember(dates.get(0).getNovember() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         } else {
-            if (date.getDecember() == null) {
-                date.setDecember(currentYear + "-" + currentMonth + "-" + currentDay + " ");
+            if (dates.get(0).getDecember() == null) {
+                dates.get(0).setDecember(currentYear + "-" + currentMonth + "-" + currentDay + " ");
             } else {
-                date.setDecember(date.getDecember() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
+                dates.get(0).setDecember(dates.get(0).getDecember() + currentYear + "-" + currentMonth + "-" + currentDay + " ");
             }
         }
-        date.updateAll("uid = ?", faces.get(0).getUid());
+        dates.get(0).updateAll("uid = ?", faces.get(0).getUid());
         faces.get(0).setCheckStatus("1");
         faces.get(0).setLastCheckTime(attendanceTime);
         faces.get(0).save();
