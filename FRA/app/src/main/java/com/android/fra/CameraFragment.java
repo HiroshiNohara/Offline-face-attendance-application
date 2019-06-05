@@ -107,7 +107,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
     private ImageReader mImageReader;
-    private File mFile;
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
     private int mState = STATE_PREVIEW;
@@ -205,86 +204,107 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                 case STATE_PREVIEW: {
                     FrameCount++;
                     Face face[] = result.get(result.STATISTICS_FACES);
-                    if (face.length > 0 && hasCaptured == false && !((CameraActivity) getActivity()).getOpenDrawerLayout()) {
-                        int[] face_rec = drawRectangle(face[0]);
-                        if (FrameCount % FrameInterval == 0 && face_rec[0] != face_rec[2]) {
-                            Bitmap bitmap_get = mTextureView.getBitmap();
-                            bitmap_get = Bitmap.createBitmap(bitmap_get, face_rec[0], face_rec[1], face_rec[2] - face_rec[0], face_rec[3] - face_rec[1]);
-                            String feature = new LBP().getFeature(bitmap_get, 8, 8);
-                            if (captureMode == 0) {
-                                Calendar calendar = Calendar.getInstance();
-                                String captureUid = new LBP().getFaceOwner(feature, 120);
-                                hasCaptured = true;
-                                currentYear = calendar.get(Calendar.YEAR);
-                                int month = calendar.get(Calendar.MONTH) + 1;
-                                currentMonth = month;
-                                currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-                                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                                int minute = calendar.get(Calendar.MINUTE);
-                                int second = calendar.get(Calendar.SECOND);
-                                final OptionMaterialDialog mMaterialDialog = new OptionMaterialDialog(getActivity());
-                                if (isSetTime && (hour < startHour || hour > endHour || (hour == startHour && minute < startMinute) || (hour == endHour && minute > endMinute))) {
-                                    mMaterialDialog.setTitle(getActivity().getString(R.string.attendance_error)).setTitleTextColor(R.color.noFaceOwner).setTitleTextSize((float) 22.5)
-                                            .setMessage(getActivity().getString(R.string.attendance_outTime)).setMessageTextSize((float) 16.5)
-                                            .setPositiveButton(getActivity().getString(R.string.operation_ok), new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    mMaterialDialog.dismiss();
-                                                    hasCaptured = false;
+                    if(face!=null) {
+                        if (face.length > 0 && hasCaptured == false && !((CameraActivity) getActivity()).getOpenDrawerLayout()) {
+                            int[] face_rec = drawRectangle(face[0]);
+                            if (FrameCount % FrameInterval == 0 && face_rec[0] != face_rec[2]) {
+                                Bitmap bitmap_get = mTextureView.getBitmap();
+                                bitmap_get = Bitmap.createBitmap(bitmap_get, face_rec[0], face_rec[1], face_rec[2] - face_rec[0], face_rec[3] - face_rec[1]);
+                                String feature = new LBP().getFeature(bitmap_get, 8, 8);
+                                if (captureMode == 0) {
+                                    Calendar calendar = Calendar.getInstance();
+                                    String captureUid = new LBP().getFaceOwner(feature, 120);
+                                    hasCaptured = true;
+                                    currentYear = calendar.get(Calendar.YEAR);
+                                    int month = calendar.get(Calendar.MONTH) + 1;
+                                    currentMonth = month;
+                                    currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+                                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                                    int minute = calendar.get(Calendar.MINUTE);
+                                    int second = calendar.get(Calendar.SECOND);
+                                    final OptionMaterialDialog mMaterialDialog = new OptionMaterialDialog(getActivity());
+                                    if (isSetTime && (hour < startHour || hour > endHour || (hour == startHour && minute < startMinute) || (hour == endHour && minute > endMinute))) {
+                                        mMaterialDialog.setTitle(getActivity().getString(R.string.attendance_error)).setTitleTextColor(R.color.noFaceOwner).setTitleTextSize((float) 22.5)
+                                                .setMessage(getActivity().getString(R.string.attendance_outTime)).setMessageTextSize((float) 16.5)
+                                                .setPositiveButton(getActivity().getString(R.string.operation_ok), new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        mMaterialDialog.dismiss();
+                                                        hasCaptured = false;
 
+                                                    }
+                                                })
+                                                .setPositiveButtonTextColor(R.color.noFaceOwner)
+                                                .show();
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mMaterialDialog.dismiss();
+                                                hasCaptured = false;
+                                            }
+                                        }, 3000);
+                                    } else {
+                                        if (!captureUid.equals("NoFaceOwner")) {
+                                            faces = LitePal.where("uid = ?", captureUid).find(com.android.fra.db.Face.class);
+                                            if (faces.get(0).getCheckStatus().equals("0")) {
+                                                String showMonth;
+                                                if (month < 10) {
+                                                    showMonth = "0" + String.valueOf(month);
+                                                } else {
+                                                    showMonth = String.valueOf(month);
                                                 }
-                                            })
-                                            .setPositiveButtonTextColor(R.color.noFaceOwner)
-                                            .show();
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mMaterialDialog.dismiss();
-                                            hasCaptured = false;
-                                        }
-                                    }, 3000);
-                                } else {
-                                    if (!captureUid.equals("NoFaceOwner")) {
-                                        faces = LitePal.where("uid = ?", captureUid).find(com.android.fra.db.Face.class);
-                                        if (faces.get(0).getCheckStatus().equals("0")) {
-                                            String showMonth;
-                                            if (month < 10) {
-                                                showMonth = "0" + String.valueOf(month);
+                                                String showDay;
+                                                if (currentDay < 10) {
+                                                    showDay = "0" + String.valueOf(currentDay);
+                                                } else {
+                                                    showDay = String.valueOf(currentDay);
+                                                }
+                                                String showHour;
+                                                if (hour < 10) {
+                                                    showHour = "0" + String.valueOf(hour);
+                                                } else {
+                                                    showHour = String.valueOf(hour);
+                                                }
+                                                String showMinute;
+                                                if (minute < 10) {
+                                                    showMinute = "0" + String.valueOf(minute);
+                                                } else {
+                                                    showMinute = String.valueOf(minute);
+                                                }
+                                                String showSecond;
+                                                if (second < 10) {
+                                                    showSecond = "0" + String.valueOf(second);
+                                                } else {
+                                                    showSecond = String.valueOf(second);
+                                                }
+                                                attendanceTime = currentYear + "." + showMonth + "." + showDay + " " + showHour + ":" + showMinute + ":" + showSecond;
+                                                detectFace();
                                             } else {
-                                                showMonth = String.valueOf(month);
+                                                mMaterialDialog.setTitle(getActivity().getString(R.string.attendance_hasAttendance)).setTitleTextColor(R.color.noFaceOwner).setTitleTextSize((float) 22.5)
+                                                        .setMessage(getActivity().getString(R.string.attendance_uid) + " " + faces.get(0).getUid() + "\n" + getActivity().getString(R.string.attendance_name) + " "
+                                                                + faces.get(0).getName() + "\n" + getActivity().getString(R.string.attendance_department) + " " + faces.get(0).getDepartment()
+                                                                + "\n" + getActivity().getString(R.string.attendance_last_time) + " " + faces.get(0).getLastCheckTime()).setMessageTextSize((float) 16.5)
+                                                        .setPositiveButton(getActivity().getString(R.string.operation_ok), new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                mMaterialDialog.dismiss();
+                                                                hasCaptured = false;
+                                                            }
+                                                        })
+                                                        .setPositiveButtonTextColor(R.color.noFaceOwner)
+                                                        .show();
+                                                new Handler().postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mMaterialDialog.dismiss();
+                                                        hasCaptured = false;
+                                                    }
+                                                }, 3000);
                                             }
-                                            String showDay;
-                                            if (currentDay < 10) {
-                                                showDay = "0" + String.valueOf(currentDay);
-                                            } else {
-                                                showDay = String.valueOf(currentDay);
-                                            }
-                                            String showHour;
-                                            if (hour < 10) {
-                                                showHour = "0" + String.valueOf(hour);
-                                            } else {
-                                                showHour = String.valueOf(hour);
-                                            }
-                                            String showMinute;
-                                            if (minute < 10) {
-                                                showMinute = "0" + String.valueOf(minute);
-                                            } else {
-                                                showMinute = String.valueOf(minute);
-                                            }
-                                            String showSecond;
-                                            if (second < 10) {
-                                                showSecond = "0" + String.valueOf(second);
-                                            } else {
-                                                showSecond = String.valueOf(second);
-                                            }
-                                            attendanceTime = currentYear + "." + showMonth + "." + showDay + " " + showHour + ":" + showMinute + ":" + showSecond;
-                                            detectFace();
                                         } else {
-                                            mMaterialDialog.setTitle(getActivity().getString(R.string.attendance_hasAttendance)).setTitleTextColor(R.color.noFaceOwner).setTitleTextSize((float) 22.5)
-                                                    .setMessage(getActivity().getString(R.string.attendance_uid) + " " + faces.get(0).getUid() + "\n" + getActivity().getString(R.string.attendance_name) + " "
-                                                            + faces.get(0).getName() + "\n" + getActivity().getString(R.string.attendance_department) + " " + faces.get(0).getDepartment()
-                                                            + "\n" + getActivity().getString(R.string.attendance_last_time) + " " + faces.get(0).getLastCheckTime()).setMessageTextSize((float) 16.5)
-                                                    .setPositiveButton(getActivity().getString(R.string.operation_ok), new View.OnClickListener() {
+                                            mMaterialDialog.setTitle(R.string.attendance_error).setTitleTextColor(R.color.noFaceOwner).setTitleTextSize((float) 22.5)
+                                                    .setMessage(R.string.attendance_not_register).setMessageTextSize((float) 16.5)
+                                                    .setPositiveButton(R.string.operation_ok, new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View v) {
                                                             mMaterialDialog.dismiss();
@@ -301,38 +321,19 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                                                 }
                                             }, 3000);
                                         }
-                                    } else {
-                                        mMaterialDialog.setTitle(R.string.attendance_error).setTitleTextColor(R.color.noFaceOwner).setTitleTextSize((float) 22.5)
-                                                .setMessage(R.string.attendance_not_register).setMessageTextSize((float) 16.5)
-                                                .setPositiveButton(R.string.operation_ok, new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        mMaterialDialog.dismiss();
-                                                        hasCaptured = false;
-                                                    }
-                                                })
-                                                .setPositiveButtonTextColor(R.color.noFaceOwner)
-                                                .show();
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                mMaterialDialog.dismiss();
-                                                hasCaptured = false;
-                                            }
-                                        }, 3000);
                                     }
+                                } else if (captureMode == 1) {
+                                    hasCaptured = true;
+                                    com.android.fra.db.Face updateFace = new com.android.fra.db.Face();
+                                    updateFace.setFeature(feature);
+                                    updateFace.updateAll("uid = ?", currentUid);
+                                    registerFace();
                                 }
-                            } else if (captureMode == 1) {
-                                hasCaptured = true;
-                                com.android.fra.db.Face updateFace = new com.android.fra.db.Face();
-                                updateFace.setFeature(feature);
-                                updateFace.updateAll("uid = ?", currentUid);
-                                registerFace();
                             }
                         }
-                    } else {
-                        clearRectangle();
-                    }
+                        } else {
+                            clearRectangle();
+                        }
                     break;
                 }
                 case STATE_WAITING_LOCK: {
