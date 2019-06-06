@@ -21,7 +21,6 @@ import com.prolificinteractive.materialcalendarview.format.TitleFormatter;
 
 import org.litepal.LitePal;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -262,4 +261,5 @@ public class CalendarViewFragment extends DialogFragment {
             }
         });
     }
+
 }

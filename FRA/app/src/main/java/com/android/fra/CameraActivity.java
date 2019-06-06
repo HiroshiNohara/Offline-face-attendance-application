@@ -22,17 +22,22 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.fra.db.Face;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import org.opencv.android.OpenCVLoader;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class CameraActivity extends BaseActivity {
 
     private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
     private DrawerLayout mDrawerLayout;
     private String currentUid;
     private int captureMode;
@@ -134,6 +139,24 @@ public class CameraActivity extends BaseActivity {
                     return true;
                 }
             });
+            Calendar calendar = Calendar.getInstance();
+            String lastAppOpenedDay = pref.getString("last_app_opened_day", "1970-1-1");
+            String today = String.valueOf(calendar.get(Calendar.YEAR)) + "-" + String.valueOf(calendar.get(Calendar.MONTH) + 1) +
+                    "-" + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                Date lastDate = dateFormat.parse(lastAppOpenedDay);
+                Date thisDate = dateFormat.parse(today);
+                if (thisDate.getTime() > lastDate.getTime()) {
+                    Face face = new Face();
+                    face.setCheckStatus("0");
+                    face.updateAll();
+                    editor = pref.edit();
+                    editor.putString("last_app_opened_day", today);
+                    editor.apply();
+                }
+            } catch (Exception e) {
+            }
         } else if (captureMode == 1) {
             getSupportActionBar().setTitle(this.getString(R.string.function_add_face));
         }

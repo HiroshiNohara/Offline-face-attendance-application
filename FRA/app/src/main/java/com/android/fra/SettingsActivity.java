@@ -36,8 +36,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.longsh.optionframelibrary.OptionMaterialDialog;
 
-import org.litepal.LitePal;
-
 import static org.litepal.LitePalApplication.getContext;
 
 public class SettingsActivity extends BaseActivity {

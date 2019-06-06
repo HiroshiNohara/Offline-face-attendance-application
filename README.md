@@ -86,13 +86,18 @@ After opening this application, you will see the following interfaces:
 ## Precautions
 
 - All major functions can be switched by swiping the pop-up side-slip menu to the right.
-- This application will only apply for **Camera** permissions on your device. Individual ROMs will prompt the application to request additional permissions. You can choose to ignore or deny these permissions.
-- Since this application does not rely on the server, you must manually enter the settings before the start of the new attendance date to clear the employee's previous attendance mark.
+- This application will only apply for **Camera** permissions on your device. Individual ROMs will prompt the application to request additional permissions, you can choose to ignore or deny these permissions.
+- You can clear the employee's attendance mark for the day at any time via `Settings`-`Reset attendance`, but I don't recommend you to do this because the application will do this for you automatically.
 - The default operation after fingerprint verification is the user's own operation, so please clear the activity of **FaceAttendance** in the background after exiting.
 - This application only passes the real machine test on Huawei Mate 9. For some reasons, the face detection frame of the mobile phone device of other models will be offset, but this may not affect the normal use.
 - The network permission required for this application is only for displaying and accessing the GitHub address of the open source framework authors, without any upload or download behavior within the application.
 
 ## Change logs
+
+### 1.3.1
+
+- Support for automatic reset of employee's attendance mark
+- Fix known issues
 
 ### 1.2.1
 

@@ -62,7 +62,6 @@ import com.longsh.optionframelibrary.OptionMaterialDialog;
 
 import org.litepal.LitePal;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -216,8 +215,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                                     String captureUid = new LBP().getFaceOwner(feature, 120);
                                     hasCaptured = true;
                                     currentYear = calendar.get(Calendar.YEAR);
-                                    int month = calendar.get(Calendar.MONTH) + 1;
-                                    currentMonth = month;
+                                    currentMonth = calendar.get(Calendar.MONTH) + 1;
                                     currentDay = calendar.get(Calendar.DAY_OF_MONTH);
                                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                                     int minute = calendar.get(Calendar.MINUTE);
@@ -248,10 +246,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                                             faces = LitePal.where("uid = ?", captureUid).find(com.android.fra.db.Face.class);
                                             if (faces.get(0).getCheckStatus().equals("0")) {
                                                 String showMonth;
-                                                if (month < 10) {
-                                                    showMonth = "0" + String.valueOf(month);
+                                                if (currentMonth < 10) {
+                                                    showMonth = "0" + String.valueOf(currentMonth);
                                                 } else {
-                                                    showMonth = String.valueOf(month);
+                                                    showMonth = String.valueOf(currentMonth);
                                                 }
                                                 String showDay;
                                                 if (currentDay < 10) {
