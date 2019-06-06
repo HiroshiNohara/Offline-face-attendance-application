@@ -1,7 +1,8 @@
 # Offline face attendance application
 
 <p align="left">
-	<img src="https://github.com/nbcsproject/FaceRecognitionAttendance-FRA/blob/master/FRA_Client-Server/App/Screenshots/icon.png" alt="Sample"  width="100" height="100"></p>
+	<img src="https://github.com/HiroshiNohara/Offline-face-attendance-application/blob/master/Screenshots/icon.png" alt="Sample"  width="100" height="100"></p>
+
 
 This application can help you streamline your employee attendance process by simply running it on an Android device that supports front camera.
 
